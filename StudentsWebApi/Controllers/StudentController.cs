@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.VisualStudio.Services.Common;
+using FluentValidation;
+using Microsoft.VisualStudio.Services.Users;
 
 namespace StudentsWebApi.Controllers
 {
@@ -14,6 +16,12 @@ namespace StudentsWebApi.Controllers
     public class StudentController : ControllerBase
     {
 
+        private readonly IValidator<Student> _validator;
+
+        public StudentController(IValidator<Student> validator)
+        {
+            _validator = validator;
+        }
 
         private static List<Student> students = new List<Student>()
         {
@@ -21,8 +29,6 @@ namespace StudentsWebApi.Controllers
             new Student {Id=2, Name = "Busra Isýk", Classroom=8, Birthdate=new DateTime(2000, 09, 08), Email="busraa@hotmail.com", Phone="78954252", Teacher="Afra" },
             new Student {Id=3, Name = "Kader Yýlmaz", Classroom=5, Birthdate = new DateTime(1999, 5, 15), Email="kaderrr@hotmail.com", Phone="99152147558", Teacher="Tuðba" }
         };
-
-
 
 
         [HttpGet] //Öðrencileri listeleme
@@ -76,9 +82,18 @@ namespace StudentsWebApi.Controllers
         {
             if (student == null) return BadRequest();
 
+            var validationResult = _validator.Validate(student);  //girilen propertyleri kontrol ediyoruz.
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors.Select(error => error.ErrorMessage);
+                return BadRequest(errors);
+            }
+
+            // Öðrenci modeli geçerliyse, ekleme iþlemini yapýn
             students.Add(student);
 
-            return Ok();
+            return Ok("Student added.");
         }
 
 
@@ -100,6 +115,16 @@ namespace StudentsWebApi.Controllers
         {
             var student = students.Find(x => x.Id == id);
             if (student == null) return NotFound();
+
+            var validationResult = _validator.Validate(updatestudent);   //girilen propertyleri kontrol ediyoruz.
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors.Select(error => error.ErrorMessage);
+                return BadRequest(errors);
+            }
+
+
             students.Remove(student);
             students.Add(updatestudent);
             return Ok();

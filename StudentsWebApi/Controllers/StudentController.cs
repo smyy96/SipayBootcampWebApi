@@ -13,6 +13,7 @@ namespace StudentsWebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]s")]
+    [FakeAuthorization]
     public class StudentController : ControllerBase
     {
 
@@ -30,6 +31,7 @@ namespace StudentsWebApi.Controllers
             new Student {Id=3, Name = "Kader Yýlmaz", Classroom=5, Birthdate = new DateTime(1999, 5, 15), Email="kaderrr@hotmail.com", Phone="99152147558", Teacher="Tuðba" }
         };
 
+        
 
         [HttpGet] //Öðrencileri listeleme
         public IActionResult Get()
@@ -77,7 +79,7 @@ namespace StudentsWebApi.Controllers
         }
 
 
-        [HttpPost] // Öðrenci ekleme iþlemi yapýyor. Burada model binding iþlemi olarak frombody kullandým.
+        [HttpPost] // Ögrenci ekleme islemi yapýyor. Burada model binding iþlemi olarak frombody kullandým.
         public IActionResult AddStudent([FromBody] Student student)
         {
             if (student == null) return BadRequest();
@@ -155,10 +157,6 @@ namespace StudentsWebApi.Controllers
                 "value": "123456789" // ve deðiþtirmek istediðimiz deðeri bu þekilde güncelleyebiliyoruz, patch' execute ettikten sonra
               }
             ]       */
-
-
-
-
 
 
     }

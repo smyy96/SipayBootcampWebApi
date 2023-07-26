@@ -57,6 +57,9 @@ namespace WebApplication1
 
             app.UseRouting();
 
+            app.UseMiddleware<LoggingMiddleware>();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
